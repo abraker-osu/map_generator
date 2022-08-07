@@ -1,7 +1,7 @@
 import math
 import random
 
-from MapGenerator import map_gen
+from OsuMapGenerator import map_gen
 
 
 

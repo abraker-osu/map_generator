@@ -11,19 +11,19 @@ class Bezier():
 
         # subdivide the curve
         subdivisions = int(approx_len / Bezier.APPROX_LEVEL) + 2
-        self.curve_points = Bezier.__point_at(curve_points, np.linspace(0, 1, subdivisions))
+        self.__curve_points = Bezier.__point_at(curve_points, np.linspace(0, 1, subdivisions))
 
         # Calculate actual length note that we gave actual points
-        diffs = np.subtract(self.curve_points[1:], self.curve_points[:-1])
-        self.len = np.sum(np.sqrt(np.einsum('...i,...i', diffs, diffs)))
+        diffs = np.subtract(self.__curve_points[1:], self.__curve_points[:-1])
+        self.__len = np.sum(np.sqrt(np.einsum('...i,...i', diffs, diffs)))
 
 
     def length(self):
-        return self.len
+        return float(self.__len)
 
 
     def point_at(self, p):
-        return self.curve_points[int(p*len(self.curve_points))]
+        return self.__curve_points[int(p*len(self.__curve_points))]
 
 
     @staticmethod
@@ -59,28 +59,27 @@ class Slider():
         IDX_Y = 2  # ypos
         IDX_C = 3  # split slider?
 
-        self.beziers = []
+        self.__beziers = []
 
         curve = []
         for c in control_points:
             curve.append([ c[IDX_X], c[IDX_Y] ])
 
             if c[IDX_C] == 1:
-                self.beziers.append(Bezier(curve))
+                self.__beziers.append(Bezier(curve))
                 curve = [ [ c[IDX_X], c[IDX_Y] ] ]
 
-        self.beziers.append(Bezier(curve))
-        self.len = sum([ b.length() for b in self.beziers ])
+        self.__beziers.append(Bezier(curve))
+        self.__len = sum([ b.length() for b in self.__beziers ])
         
-        self.curve = []
-        for bezier in self.beziers:
-            self.curve.extend(bezier.curve_points)
+        self.__curve = []
+        for bezier in self.__beziers:
+            self.__curve.extend(bezier._Bezier__curve_points)
 
 
     def point_at(self, p):
-        return self.curve[int(p*len(self.curve))]
-
+        return self.__curve[int(p*len(self.__curve))]
 
 
     def length(self):
-        return self.len
+        return self.__len
