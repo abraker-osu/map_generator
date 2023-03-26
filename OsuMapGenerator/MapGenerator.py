@@ -226,6 +226,12 @@ class MapGenerator():
         # Write to beatmap file
         os.makedirs(filepath, exist_ok=True)
 
+        if len(res_path) == 0:
+            res_path = os.getcwd()
+
+        if res_path[-1] != '/':
+            res_path += '/'
+
         with open(f'{res_path}res/tmp.osu', 'wt', encoding='utf-8') as f:
             f.write(beatmap_data)
 
