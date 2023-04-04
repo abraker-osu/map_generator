@@ -227,25 +227,25 @@ class MapGenerator():
         os.makedirs(filepath, exist_ok=True)
 
         if len(res_path) == 0:
-            res_path = os.getcwd()
+            res_path = f'{os.getcwd()}/res/'
 
         if res_path[-1] != '/':
             res_path += '/'
 
-        with open(f'{res_path}res/tmp.osu', 'wt', encoding='utf-8') as f:
+        with open(f'{res_path}tmp.osu', 'wt', encoding='utf-8') as f:
             f.write(beatmap_data)
 
-        map_md5 = hashlib.md5(open(f'{res_path}res/tmp.osu', 'rb').read()).hexdigest()
+        map_md5 = hashlib.md5(open(f'{res_path}tmp.osu', 'rb').read()).hexdigest()
 
         if not os.path.isfile(f'{filepath}/{map_md5}.osu'):
-            shutil.copy2(f'{res_path}res/tmp.osu', f'{filepath}/{map_md5}.osu')
-        os.remove(f'{res_path}res/tmp.osu')
+            shutil.copy2(f'{res_path}tmp.osu', f'{filepath}/{map_md5}.osu')
+        os.remove(f'{res_path}tmp.osu')
 
         if not os.path.isfile(f'{filepath}/pluck.wav'):
-            shutil.copy2(f'{res_path}res/pluck.wav', f'{filepath}/pluck.wav')
+            shutil.copy2(f'{res_path}pluck.wav', f'{filepath}/pluck.wav')
 
         if not os.path.isfile(f'{filepath}/normal-hitnormal.wav'):
-            shutil.copy2(f'{res_path}res/blank.wav', f'{filepath}/normal-hitnormal.wav')
+            shutil.copy2(f'{res_path}blank.wav', f'{filepath}/normal-hitnormal.wav')
 
 
 
