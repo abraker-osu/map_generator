@@ -228,7 +228,9 @@ class MapGenerator():
 
     @staticmethod
     def save(beatmap_data: str, filepath: str, res_path: str = ''):
-        # Write to beatmap file
+        """
+        Write to beatmap file
+        """
         os.makedirs(filepath, exist_ok=True)
 
         if len(res_path) == 0:
@@ -251,7 +253,6 @@ class MapGenerator():
 
         if not os.path.isfile(f'{filepath}/normal-hitnormal.wav'):
             shutil.copy2(f'{res_path}blank.wav', f'{filepath}/normal-hitnormal.wav')
-
 
 
     @staticmethod
