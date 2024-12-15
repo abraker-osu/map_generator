@@ -68,7 +68,7 @@ class Bezier():
 
 class Slider():
 
-    def __init__(self, control_points: list[list[int]]):
+    def __init__(self, control_points: list[list[float | int]]):
         IDX_T = 0  # time
         IDX_X = 1  # xpos
         IDX_Y = 2  # ypos

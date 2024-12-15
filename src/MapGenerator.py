@@ -28,7 +28,7 @@ class MapGenerator():
     version = None
     creator = None
 
-    data: list[list[list[int]]] = []
+    data: list[list[list[float | int]]] = []
     rate = 1.0
     t    = 0
 
@@ -76,7 +76,7 @@ class MapGenerator():
 
 
     @staticmethod
-    def add_note(note_data: list[list[int]], t_delta=True):
+    def add_note(note_data: list[list[float | int]], t_delta=True):
         IDX_T = 0  # time
         IDX_X = 1  # xpos
         IDX_Y = 2  # ypos
