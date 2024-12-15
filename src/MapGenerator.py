@@ -17,31 +17,31 @@ class MapGenerator():
     NCOMBO  = 1 << 2
     SPINNER = 1 << 3
 
-    def __init__(self):
-        self.ar = None
-        self.cs = None
-        self.od = None
-        self.hp = None
- 
-        self.sm = None  # slider multiplier; Base slider velocity in hundreds of osu! pixels per beat
-        self.st = None  # slider tick rate; How many ticks per beat the slider is split into
+    ar = None
+    cs = None
+    od = None
+    hp = None
 
-        self.version = None
-        self.creator = None
+    sm = None  # slider multiplier; Base slider velocity in hundreds of osu! pixels per beat
+    st = None  # slider tick rate; How many ticks per beat the slider is split into
 
-        self.data = None
-        self.rate = 1.0
-        self.t    = 0
+    version = None
+    creator = None
+
+    data: list[list[list[int]]] = []
+    rate = 1.0
+    t    = 0
 
 
-    def start(self, ar, cs, od, hp, sm=1, st=1):
-        self.ar = float(ar)
-        self.cs = float(cs)
-        self.od = float(od)
-        self.hp = float(hp)
+    @staticmethod
+    def start(ar: float, cs: float, od: float, hp: float, sm: float = 1, st: float = 1):
+        MapGenerator.ar = float(ar)
+        MapGenerator.cs = float(cs)
+        MapGenerator.od = float(od)
+        MapGenerator.hp = float(hp)
 
-        self.sm = float(sm)
-        self.st = int(st)
+        MapGenerator.sm = float(sm)
+        MapGenerator.st = int(st)
 
         if not (0.0 <= ar <= 11.0): raise ValueError('AR must be between 0.0 and 11.0.')
         if not (0.0 <= cs <= 10.0): raise ValueError('CS must be between 0.0 and 10.0.')
@@ -51,70 +51,74 @@ class MapGenerator():
         if not (0.0 <= sm): raise ValueError('SM must be more than 0.0')
         if not (0   <= st): raise ValueError('ST must be more than 0')
 
-        if self.ar > 10.0:
-            self.rate = 1.5
-            self.ar   = MapGenerator.__ms_to_ar(MapGenerator.__ar_to_ms(ar)*self.rate)
+        if MapGenerator.ar > 10.0:
+            MapGenerator.rate = 1.5
+            MapGenerator.ar   = MapGenerator.__ms_to_ar(MapGenerator.__ar_to_ms(ar)*MapGenerator.rate)
 
-        self.version = None
-        self.data    = []
-        self.t       = 0
+        MapGenerator.version = None
+        MapGenerator.data    = []
+        MapGenerator.t       = 0
 
 
-    def set_meta(self, version, creator='unknown'):
+    @staticmethod
+    def set_meta(version: str, creator: str = 'unknown'):
         if len(version) > 16: raise ValueError('Version is too long.')
         if len(creator) > 32: raise ValueError('Creator is too long.')
 
-        self.version = version
-        self.creator = creator
+        MapGenerator.version = version
+        MapGenerator.creator = creator
 
 
-    def add_sv(self, sv):
+    @staticmethod
+    def add_sv(sv: float):
         # TODO
         pass
 
 
-    def add_note(self, note_data, t_delta=True):
+    @staticmethod
+    def add_note(note_data: list[list[int]], t_delta=True):
         IDX_T = 0  # time
         IDX_X = 1  # xpos
         IDX_Y = 2  # ypos
         IDX_C = 3  # split slider?
 
         if type(note_data) is not list:
-            raise ValueError('Note data must be a list of int 3-tuples: [ t, x, y, c ]')
+            raise ValueError('Note data must be a list of int 4-tuples: [ t, x, y, c ]')
 
         for i, _ in enumerate(note_data):
             if len(note_data[i]) != 4:
-                raise ValueError('Note data must be a list of int 3-tuples: [ t, x, y, c ]')
+                raise ValueError('Note data must be a list of int 4-tuples: [ t, x, y, c ]')
 
             if t_delta:
-                note_t = self.t
-                self.t += int(note_data[i][IDX_T] / self.rate)
+                note_t = MapGenerator.t
+                MapGenerator.t += int(note_data[i][IDX_T] / MapGenerator.rate)
             else:
-                self.t = int(note_data[i][IDX_T] / self.rate)
-                note_t = self.t
- 
+                MapGenerator.t = int(note_data[i][IDX_T] / MapGenerator.rate)
+                note_t = MapGenerator.t
+
             note_data[i][IDX_T] = note_t
             note_data[i][IDX_X] = int(note_data[i][IDX_X])
             note_data[i][IDX_Y] = int(note_data[i][IDX_Y])
             note_data[i][IDX_C] = int(note_data[i][IDX_C])
-        
-        self.data += [ note_data ]
+
+        MapGenerator.data += [ note_data ]
 
 
-    def gen(self):
-        if self.ar is None: raise ValueError('AR is not set. Use start() to set it.')
-        if self.cs is None: raise ValueError('CS is not set. Use start() to set it.')
-        if self.od is None: raise ValueError('OD is not set. Use start() to set it.')
-        if self.hp is None: raise ValueError('HP is not set. Use start() to set it.')
+    @staticmethod
+    def gen() -> str:
+        if MapGenerator.ar is None: raise ValueError('AR is not set. Use start() to set it.')
+        if MapGenerator.cs is None: raise ValueError('CS is not set. Use start() to set it.')
+        if MapGenerator.od is None: raise ValueError('OD is not set. Use start() to set it.')
+        if MapGenerator.hp is None: raise ValueError('HP is not set. Use start() to set it.')
 
-        if self.sm is None: raise ValueError('SM is not set. Use start() to set it.')
-        if self.st is None: raise ValueError('ST is not set. Use start() to set it.')
+        if MapGenerator.sm is None: raise ValueError('SM is not set. Use start() to set it.')
+        if MapGenerator.st is None: raise ValueError('ST is not set. Use start() to set it.')
 
-        if self.data is None:
+        if MapGenerator.data is None:
             raise ValueError('Data is not set. Use set_data() to set it.')
 
-        if self.version is None:
-            self.version = 'gen'
+        if MapGenerator.version is None:
+            MapGenerator.version = 'gen'
 
         IDX_T = 0  # time
         IDX_X = 1  # xpos
@@ -145,32 +149,32 @@ class MapGenerator():
             [Metadata]
             Title:unknown
             TitleUnicode:unknown
-            Artist:{self.creator}
-            ArtistUnicode:{self.creator}
-            Creator:{self.creator}
-            Version:{self.version}
+            Artist:{MapGenerator.creator}
+            ArtistUnicode:{MapGenerator.creator}
+            Creator:{MapGenerator.creator}
+            Version:{MapGenerator.version}
             Source:
             Tags:
             BeatmapID:0
             BeatmapSetID:0
 
             [Difficulty]
-            HPDrainRate:{self.hp}
-            CircleSize:{self.cs}
-            OverallDifficulty:{self.od}
-            ApproachRate:{self.ar}
-            SliderMultiplier:{self.sm}
-            SliderTickRate:{self.st}
+            HPDrainRate:{MapGenerator.hp}
+            CircleSize:{MapGenerator.cs}
+            OverallDifficulty:{MapGenerator.od}
+            ApproachRate:{MapGenerator.ar}
+            SliderMultiplier:{MapGenerator.sm}
+            SliderTickRate:{MapGenerator.st}
 
             [Events]\
             """
         )
 
         # Generate notes
-        for note in self.data:
+        for note in MapGenerator.data:
             beatmap_data += textwrap.dedent(
                 f"""
-                Sample,{int(note[0][IDX_T] + MapGenerator.AUDIO_OFFSET*self.rate)},3,"pluck.wav",100\
+                Sample,{int(note[0][IDX_T] + MapGenerator.AUDIO_OFFSET*MapGenerator.rate)},3,"pluck.wav",100\
                 """
             )
 
@@ -185,12 +189,12 @@ class MapGenerator():
             """
         )
 
-        for note in self.data:
+        for note in MapGenerator.data:
             if len(note) == 1:
                 # It's a single note
                 beatmap_data += textwrap.dedent(
                     f"""
-                    {int(note[0][IDX_X])},{int(note[0][IDX_Y])},{int(note[0][IDX_T] + MapGenerator.AUDIO_OFFSET*self.rate)},{MapGenerator.CIRCLE},0,0:0:0:0:\
+                    {int(note[0][IDX_X])},{int(note[0][IDX_Y])},{int(note[0][IDX_T] + MapGenerator.AUDIO_OFFSET*MapGenerator.rate)},{MapGenerator.CIRCLE},0,0:0:0:0:\
                     """
                 )
             else:
@@ -200,7 +204,7 @@ class MapGenerator():
                 slider_data = ''
                 for c in note[1:]:
                     slider_data += f'|{c[IDX_X]}:{c[IDX_Y]}'
-                    
+
                     if c[IDX_C] == 1:
                         slider_data += f'|{c[IDX_X]}:{c[IDX_Y]}'
 
@@ -209,7 +213,7 @@ class MapGenerator():
 
                 beatmap_data += textwrap.dedent(
                     f"""
-                    {int(note[0][IDX_X])},{int(note[0][IDX_Y])},{int(note[0][IDX_T] + MapGenerator.AUDIO_OFFSET*self.rate)},{MapGenerator.SLIDER},0,B{slider_data},{repeats},{px_len}\
+                    {int(note[0][IDX_X])},{int(note[0][IDX_Y])},{int(note[0][IDX_T] + MapGenerator.AUDIO_OFFSET*MapGenerator.rate)},{MapGenerator.SLIDER},0,B{slider_data},{repeats},{px_len}\
                     """
                 )
 
@@ -222,7 +226,8 @@ class MapGenerator():
         return beatmap_data
 
 
-    def save(self, beatmap_data, filepath):
+    @staticmethod
+    def save(beatmap_data: str, filepath: str):
         # Write to beatmap file
         os.makedirs(filepath, exist_ok=True)
 

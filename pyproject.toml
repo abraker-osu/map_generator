@@ -1,0 +1,22 @@
+[build-system]
+requires      = [ "setuptools >= 64", 'setuptools_scm[toml] >=8 ' ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name            = "osu-map-generator"
+description     = "Python library to generate osu! maps programmatically"
+readme          = "README.md"
+requires-python = ">= 3.10"
+dynamic         = [ "version" ]
+
+dependencies = [
+    "numpy >= 1.22.0, < 2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/abraker-osu/map_generator"
+
+[tool.setuptools.package-dir]
+map_generator = "src"
+
+[tool.setuptools_scm]
