@@ -227,7 +227,7 @@ class MapGenerator():
 
 
     @staticmethod
-    def save(beatmap_data: str, filepath, res_path='': str):
+    def save(beatmap_data: str, filepath: str, res_path: str = ''):
         # Write to beatmap file
         os.makedirs(filepath, exist_ok=True)
 
